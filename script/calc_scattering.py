@@ -9,9 +9,9 @@ import time
 
 N = 512
 
-def filelist(path, m = None):
+def filelist(path, pattern = None):
     if m is None:
-        m = re.compile('_[3-5](\d){4}_')
+        m = re.compile(pattern)
     data_files = [ os.path.join(path, f) for f in os.listdir(path) if m.search(f) ]
     return sorted(data_files)
 
@@ -42,8 +42,8 @@ if __name__ == '__main__':
     qtmp.attrs['theta_units'] = 'degree'
 
     # read data
-    m = re.compile('[3-5](\d){4}')
-    npys = filelist('data', m)
+    pattern = '[3-5](\d){4}'
+    npys = filelist('data', pattern)
     Nsteps = len(npys)
     dset = grp.create_dataset('imgs', (Nsteps, N, N), 'f')    
 
