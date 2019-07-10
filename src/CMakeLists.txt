@@ -1,28 +1,46 @@
 
+cmake_minimum_required(VERSION 3.8)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 3.2)
-
-PROJECT(MDScatter CXX)
-SET(foo_VERSION_MAJOR 1)
-SET(foo_VERSION_MINOR 0)
+project(MDScatter CXX)
+set(MDScatter_VERSION_MAJOR 1)
+set(MDScatter_VERSION_MINOR 0)
 
 
 # C++11 Stuff
-SET(CMAKE_CXX_STANDARD 11)
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-SET(SRC dft.cpp)
+set(SRC dft.cpp)
 
-INCLUDE_DIRECTORIES("/usr/include/python3.6m")
+# python d
+find_package(PythonLibs REQUIRED)
+include_directories(${PYTHON_INCLUDE_DIRS})
 
-FIND_PACKAGE(pybind11 REQUIRED)
+# pybind11
+find_package(pybind11 REQUIRED)
+set(LIBS pybind11::module)
 
-FIND_PACKAGE(OpenMP)
-IF(OpenMP_FOUND)
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-ENDIF(OpenMP_FOUND)
+find_package(OpenMP)
+if(OpenMP_FOUND)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+endif(OpenMP_FOUND)
+
+
+include(CheckLanguage)
+check_language(CUDA)
+if (CMAKE_CUDA_COMPILER) 
+	enable_language(CUDA)
+	add_definitions("-DHAVE_CUDA")
+	include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
+	add_library(cudadft SHARED gpu_dft.cu)
+	set_target_properties(cudadft PROPERTIES CUDA_SEPARABLE_COMPILATION ON) 
+	set(LIBS ${LIBS} cudadft ${CUDA_CUDART_LIBRARY})
+else()
+	message(STATUS "No CUDA Support")
+endif()
 
 add_library(mdscatter MODULE ${SRC})
-target_link_libraries(mdscatter PRIVATE pybind11::module)
+target_link_libraries(mdscatter PRIVATE ${LIBS})
 set_target_properties(mdscatter PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}"
                                          SUFFIX "${PYTHON_MODULE_EXTENSION}")
+                                        

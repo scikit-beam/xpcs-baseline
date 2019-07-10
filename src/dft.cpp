@@ -1,12 +1,13 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
-#include <complex>
+
+#include "complex.h"
 
 namespace py = pybind11;
-typedef std::complex<float> complex_t;
 
-const complex_t COMPLX_J(0, 1);
-const complex_t COMPLX_ZERO(0, 0);
+#ifdef HAVE_CUDA
+extern void cudft(unsigned, float *,  unsigned, float *, complex_t *);
+#endif // HAVE_CUDA
 
 py::array py_dft(py::array_t<float, py::array::c_style | py::array::forcecast> Pts,
 				 py::array_t<float, py::array::c_style | py::array::forcecast> qVals) {
@@ -32,6 +33,9 @@ py::array py_dft(py::array_t<float, py::array::c_style | py::array::forcecast> P
 		float * qvs = (float *) buf2.ptr;
 		complex_t * ft = (complex_t *) buf3.ptr;
 
+#ifdef HAVE_CUDA
+		cudft(npts, pts, nq, qvs, ft);		
+#else // HAVE_CUDA
 #pragma omp parallel for
 		for (int i = 0; i < nq; i++) {
 			ft[i] = COMPLX_ZERO;
@@ -41,6 +45,7 @@ py::array py_dft(py::array_t<float, py::array::c_style | py::array::forcecast> P
 				ft[i] += std::exp(-COMPLX_J * q_r);
 			}
 		}
+#endif
 		return result;
 }
 
