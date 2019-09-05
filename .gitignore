@@ -33,3 +33,5 @@
 
 build/
 mdscatter.egg-info/
+data/  # output data from lammps
+log.lammps
