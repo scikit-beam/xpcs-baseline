@@ -35,3 +35,4 @@ build/
 mdscatter.egg-info/
 data/
 log.lammps
+*.h5

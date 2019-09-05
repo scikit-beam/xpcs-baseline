@@ -7,6 +7,7 @@ import os
 import re
 import h5py
 import time
+import tqdm
 
 N = 512
 
@@ -36,13 +37,14 @@ if __name__ == '__main__':
     qtmp.attrs['theta'] = [-10, 10]
     qtmp.attrs['theta_units'] = 'degree'
 
-    steps = sorted(glob.glob('data/*.txt'))
+    # List data files sorted by step number.
+    steps = sorted(glob.glob('data/*.txt'), key=lambda name: int(name[8:-4]))
     Nsteps = len(steps)
     dset = grp.create_dataset('imgs', (Nsteps, N, N), 'f')    
 
     # turn the crank
     t0 = time.time()
-    for i, npy in enumerate(steps):
+    for i, npy in tqdm.tqdm(enumerate(steps), total=Nsteps):
         # Data is id, x, y ,z. Drop the id column.
         # Multiply by 16 to get the q-range for 8-ID-I setup.
         pts = 16 * np.loadtxt(npy, skiprows=9)[:, 1:]
