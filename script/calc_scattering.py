@@ -2,18 +2,13 @@
 
 import mdscatter
 import numpy as np
+import glob
 import os
 import re
 import h5py
 import time
 
 N = 512
-
-def filelist(path, pattern = None):
-    if m is None:
-        m = re.compile(pattern)
-    data_files = [ os.path.join(path, f) for f in os.listdir(path) if m.search(f) ]
-    return sorted(data_files)
 
 def qvals(theta = [-10, 10], wavelen = 0.1, nrow = 64, ncol = 64):
     th = np.deg2rad(np.linspace(theta[0], theta[1], ncol))
@@ -41,16 +36,16 @@ if __name__ == '__main__':
     qtmp.attrs['theta'] = [-10, 10]
     qtmp.attrs['theta_units'] = 'degree'
 
-    # read data
-    pattern = '[3-5](\d){4}'
-    npys = filelist('data', pattern)
-    Nsteps = len(npys)
+    steps = sorted(glob.glob('data/*.txt'))
+    Nsteps = len(steps)
     dset = grp.create_dataset('imgs', (Nsteps, N, N), 'f')    
 
     # turn the crank
     t0 = time.time()
-    for i, npy in enumerate(npys):
-        pts = np.load(npy).T 
+    for i, npy in enumerate(steps):
+        # Data is id, x, y ,z. Drop the id column.
+        # Multiply by 16 to get the q-range for 8-ID-I setup.
+        pts = 16 * np.loadtxt(npy, skiprows=9)[:, 1:]
         img = mdscatter.dft(pts, qvals)
         img = np.abs(img)**2
         dset[i,:,:] = np.reshape(img, (N, N))
