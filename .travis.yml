@@ -1,0 +1,24 @@
+language: python
+python:
+  - 3.7
+cache:
+  directories:
+    - $HOME/.cache/pip
+    - $HOME/.ccache  # https://github.com/travis-ci/travis-ci/issues/5853
+
+install:
+  - pip install .
+
+script:
+  - lammps -in lammps/in.melt
+  - python script/calc_scattering.py
+  - tar czf xpcs-baseline.tar.gz xpcs00512.h5
+
+deploy:
+    provider: releases
+    api_key: $GITHUB_OAUTH_TOKEN
+    skip_cleanup: true
+    file_glob: true
+    file: xpcs-baseline.tar.gz
+    on:
+      tags: true
