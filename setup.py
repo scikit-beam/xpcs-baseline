@@ -65,10 +65,8 @@ class CMakeBuild(build_ext):
 setup(
     name='mdscatter',
     version='0.0.1',
-    author='Dean Moldovan',
-    author_email='dean0x7d@gmail.com',
-    description='A test project using pybind11 and CMake',
-    long_description='',
+    author='Dinesh Kumar',
+    description='MD Generated samples to test XPCS algorithms',
     ext_modules=[CMakeExtension('mdscatter')],
     cmdclass=dict(build_ext=CMakeBuild),
     install_requires=requirements,
