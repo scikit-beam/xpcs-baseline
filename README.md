@@ -54,3 +54,8 @@ frame0 = file['xpcs']['imgs'][0, :, :]
 import matplotlib.pyplot as plt
 plt.imshow(frame0)
 ```
+
+### Developer Notes
+
+This project's structure was based on
+[the pybind11 CMake example](https://github.com/pybind/cmake_example).
