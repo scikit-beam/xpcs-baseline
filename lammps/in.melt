@@ -27,4 +27,4 @@ thermo_style	custom step temp c_1[4] v_fitslope
 dump 2 all custom 1000 data/al.*.txt id x y z
 
 thermo	1000
-run	60000
+run	10000
