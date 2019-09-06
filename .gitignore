@@ -36,3 +36,4 @@ mdscatter.egg-info/
 data/
 log.lammps
 *.h5
+*.png

@@ -16,7 +16,8 @@ install:
 script:
   - lammps -in lammps/in.melt
   - python script/calc_scattering.py
-  - tar czf xpcs-baseline.tar.gz xpcs00512.h5
+  - python script/export_first_frame.py xpcs00512.h5 xpcs00512-frame0.png
+  - tar czf xpcs-baseline.tar.gz xpcs00512.h5 xpcs00512-frame0.png
 
 deploy:
     provider: releases
