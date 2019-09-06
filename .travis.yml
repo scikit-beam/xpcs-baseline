@@ -17,13 +17,15 @@ script:
   - lammps -in lammps/in.melt
   - python script/calc_scattering.py
   - python script/export_first_frame.py xpcs00512.h5 xpcs00512-frame0.png
-  - tar czf xpcs-baseline.tar.gz xpcs00512.h5 xpcs00512-frame0.png
+  # Make a tarball to upload.
+  - export FILE_TO_UPLOAD=xpcs-baseline-${TRAVIS_TAG}.tar.gz
+  - tar czf ${FILE_TO_UPLOAD} xpcs00512.h5 xpcs00512-frame0.png
 
 deploy:
     provider: releases
     api_key: $GITHUB_OAUTH_TOKEN
     skip_cleanup: true
     file_glob: true
-    file: xpcs-baseline.tar.gz
+    file: "${FILE_TO_UPLOAD}"
     on:
       tags: true
