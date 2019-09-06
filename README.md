@@ -1,6 +1,13 @@
 # xpcs-baseline
 MD Generated samples to test XPCS algorithms
 
+Results can be downloaded from
+[the releases page](https://github.com/scikit-beam/xpcs-baseline/releases)
+or reproduced as documented below.
+
+Preview images from proposed changes are uploaded to
+[this gist](https://gist.github.com/bnl-dama-bot/495b52d09a9e30a7c4b0f4c0d104b9c7).
+
 ## Installation and Usage
 
 ### Installation
